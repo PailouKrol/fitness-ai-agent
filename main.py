@@ -4459,4 +4459,13 @@ async def webhook(request: Request):
 #         port=FASTAPI_PORT,
 #         reload=False
 #     )
-
+if __name__ == "__main__":
+    
+    print("🤖 Запуск бота...")
+    print("✅ Бот запущен и готов к работе!")
+    
+    # Удаляем вебхук (на всякий случай)
+    bot.remove_webhook()
+    
+    # Запускаем бота
+    bot.infinity_polling()
