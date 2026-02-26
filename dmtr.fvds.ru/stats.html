@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Статистика | Админ-панель</title>
+
+  <!-- Стили AdminLTE (обязательно для работы меню) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  
+  <style>
+    body {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+
+    /* Кастомные стили поверх AdminLTE */
+    .statistics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .statistic-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .statistic-card.blue {
+      background: #17a2b8;
+    }
+
+    .statistic-card.green {
+      background: #28a745;
+    }
+
+    .statistic-card.yellow {
+      background: #ffc107;
+    }
+
+    .statistic-card.red {
+      background: #dc3545;
+    }
+
+    .statistic-value {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    .statistic-label {
+      margin: 0;
+      opacity: 0.8;
+    }
+
+    .statistic-icon {
+      font-size: 3rem;
+      opacity: 0.5;
+    }
+
+    .data-card {
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .data-card-header {
+      padding: 15px;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .data-card-title {
+      margin: 0;
+      font-size: 1.1rem;
+    }
+
+    .refresh-button {
+      background: none;
+      border: none;
+      color: #6c757d;
+      cursor: pointer;
+    }
+
+    .users-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .users-table th {
+      background: #f8f9fa;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .users-table td {
+      padding: 12px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .user-link {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      color: white;
+    }
+
+    .status-badge.active {
+      background: #28a745;
+    }
+
+    .status-badge.inactive {
+      background: #6c757d;
+    }
+
+    .view-button {
+      background: #17a2b8;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .update-time {
+      text-align: center;
+      color: #6c757d;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Навбар (верхняя панель) -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <!-- Кнопка для сворачивания/разворачивания меню -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+          <i class="fas fa-bars"></i>
+        </a>
+      </li>
+    </ul>
+    
+    <!-- Правая часть навбара -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Выйти
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Левое меню (будет сворачиваться) -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Логотип -->
+    <a href="#" class="brand-link">
+      <span class="brand-text font-weight-light">Админ-панель</span>
+    </a>
+    
+    <!-- Содержимое меню -->
+    <div class="sidebar">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="info">
+          <a href="#" class="d-block">Administrator</a>
+        </div>
+      </div>
+      
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Пользователи</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Контент -->
+  <div class="content-wrapper">
+    <!-- Заголовок -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Статистика пользователей</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основная часть -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Карточки статистики -->
+        <div class="statistics-grid">
+          <div class="statistic-card blue">
+            <div>
+              <h3 class="statistic-value" id="total-users">0</h3>
+              <p class="statistic-label">Всего пользователей</p>
+            </div>
+            <div class="statistic-icon"><i class="fas fa-users"></i></div>
+          </div>
+          
+          <div class="statistic-card green">
+            <div>
+              <h3 class="statistic-value" id="active-users">0</h3>
+              <p class="statistic-label">Активных</p>
+            </div>
+            <div class="statistic-icon"><i class="fas fa-user-check"></i></div>
+          </div>
+          
+          <div class="statistic-card yellow">
+            <div>
+              <h3 class="statistic-value" id="last-24h">0</h3>
+              <p class="statistic-label">За 24 часа</p>
+            </div>
+            <div class="statistic-icon"><i class="fas fa-clock"></i></div>
+          </div>
+        </div>
+
+        <!-- Таблица пользователей -->
+        <div class="data-card">
+          <div class="data-card-header">
+            <h3 class="data-card-title">Список пользователей</h3>
+            <div class="card-tools">
+              <button class="refresh-button" onclick="loadData()">
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="card-body p-0">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Регистрация</th>
+                  <th>Последний визит</th>
+                  <th>Токены</th>
+                  <th>Статус</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="users-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        
+        <p class="update-time">Обновлено: <span id="update-time"></span></p>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Скрипты AdminLTE (обязательно для работы меню) -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+async function loadData() {
+    try {
+        const response = await fetch('/api/stats');
+        if (response.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        
+        const data = await response.json();
+        
+        // Обновляем карточки
+        document.getElementById('total-users').textContent = data.total_users;
+        document.getElementById('active-users').textContent = data.active_users;
+        document.getElementById('last-24h').textContent = data.last_24h;
+        document.getElementById('update-time').textContent = data.update_time;
+        
+        // Заполняем таблицу
+        const tableBody = document.getElementById('users-table-body');
+        tableBody.innerHTML = '';
+        
+        data.users.forEach(user => {
+            const statusClass = user[5] === 'active' ? 'active' : 'inactive';
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><a href="/stats/${user[0]}" class="user-link">${user[0]}</a></td>
+                <td>${user[3] || 'не указано'}</td>
+                <td>${user[4] || 'не указано'}</td>
+                <td>${user[6] || 0}</td>
+                <td><span class="status-badge ${statusClass}">${user[5] || 'unknown'}</span></td>
+                <td><a href="/stats/${user[0]}" class="view-button"><i class="fas fa-eye"></i></a></td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+    } catch (error) {
+        Swal.fire('Ошибка', 'Не удалось загрузить данные', 'error');
+    }
+}
+
+async function logout() {
+    const result = await Swal.fire({
+        title: 'Выход',
+        text: 'Вы уверены?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Да',
+        cancelButtonText: 'Нет'
+    });
+    
+    if (result.isConfirmed) {
+        await fetch('/logout', { method: 'POST' });
+        window.location.href = '/login';
+    }
+}
+
+// Загружаем при старте
+loadData();
+</script>
+
+</body>
+</html>

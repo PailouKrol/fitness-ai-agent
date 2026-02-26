@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Админ-панель | Вход</title>
+
+  <!-- Стили -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/css/adminlte.min.css">
+</head>
+<body class="login-page">
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-card-header">
+      <h1 class="login-title">Админ-панель</h1>
+    </div>
+    
+    <div class="login-card-body">
+      <p class="login-subtitle">Вход в панель управления</p>
+
+      <form id="loginForm" onsubmit="login(event)">
+        <div class="input-group">
+          <input type="text" id="username" class="form-control" placeholder="Логин" required>
+          <span class="input-icon">
+            <i class="fas fa-user"></i>
+          </span>
+        </div>
+        
+        <div class="input-group">
+          <input type="password" id="password" class="form-control" placeholder="Пароль" required>
+          <span class="input-icon">
+            <i class="fas fa-lock"></i>
+          </span>
+        </div>
+        
+        <div class="button-container">
+          <button type="submit" class="login-button">Войти</button>
+        </div>
+      </form>
+
+      <div id="error" class="error-message" style="display: none;"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+
+<script>
+async function login(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorDiv = document.getElementById('error');
+    
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ username, password })
+        });
+        
+        if (response.ok) {
+            window.location.href = '/stats';
+        } else {
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'Неверный логин или пароль';
+        }
+    } catch (err) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = 'Ошибка соединения';
+    }
+}
+</script>
+
+<style>
+/* Свои стили для сохранения внешнего вида */
+body.login-page {
+    background: #e9ecef;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.login-container {
+    width: 360px;
+}
+
+.login-card {
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.login-card-header {
+    padding: 30px 20px 10px 20px;
+    text-align: center;
+}
+
+.login-title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333;
+    cursor: default;
+}
+
+.login-card-body {
+    padding: 20px;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.input-group .form-control {
+    flex: 1;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.input-group .form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.input-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.login-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.login-button:hover {
+    background: #0069d9;
+}
+
+.error-message {
+    padding: 10px;
+    margin-top: 15px;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    border-radius: 5px;
+    text-align: center;
+}
+</style>
+
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Пользователь | Админ-панель</title>
+
+  <!-- AdminLTE базовые стили -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Верхняя панель -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="#" role="button">
+          <i class="fas fa-bars"></i>
+        </a>
+      </li>
+    </ul>
+    
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Выйти
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Левое меню -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="#" class="brand-link">
+      <span class="brand-text font-weight-light">Админ-панель</span>
+    </a>
+    
+    <div class="sidebar">
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="info">
+          <a href="#" class="d-block">Administrator</a>
+        </div>
+      </div>
+      
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column">
+          <li class="nav-item">
+            <a href="/stats" class="nav-link">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Все пользователи</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-user"></i>
+              <p>Текущий пользователь</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <!-- Основной контент -->
+  <div class="content-wrapper">
+    <!-- Заголовок страницы -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Пользователь <span id="user-id-header"></span></h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="/stats">Главная</a></li>
+              <li class="breadcrumb-item active">Пользователь</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Контент -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <!-- Информация о пользователе -->
+          <div class="col-md-6">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Основная информация</h3>
+                <div class="card-tools">
+                  <button class="btn btn-tool" onclick="loadUserData()">
+                    <i class="fas fa-sync-alt"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <tr>
+                    <th style="width: 200px;">Telegram ID</th>
+                    <td id="user-telegram-id"></td>
+                  </tr>
+                  <tr>
+                    <th>Статус</th>
+                    <td><span id="user-status" class="badge badge-success">active</span></td>
+                  </tr>
+                  <tr>
+                    <th>Зарегистрирован</th>
+                    <td id="user-registered"></td>
+                  </tr>
+                  <tr>
+                    <th>Последний визит</th>
+                    <td id="user-last-visit"></td>
+                  </tr>
+                  <tr>
+                    <th>Использовано токенов</th>
+                    <td id="user-tokens">0</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Управление -->
+          <div class="col-md-6">
+            <div class="card card-danger">
+              <div class="card-header">
+                <h3 class="card-title">Управление</h3>
+              </div>
+              <div class="card-body">
+                <button class="btn btn-danger btn-block" onclick="confirmDelete()">
+                  <i class="fas fa-trash"></i> Удалить пользователя
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON данные -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Все данные пользователя</h3>
+                <div class="card-tools">
+                  <button class="btn btn-tool" onclick="copyToClipboard()">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <pre id="json-data" style="max-height: 400px; overflow-y: auto; background: #f4f4f4; padding: 10px; border-radius: 4px;">Загрузка...</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- Скрипты -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+const userId = window.location.pathname.split('/').pop();
+document.getElementById('user-id-header').textContent = userId;
+
+async function loadUserData() {
+    try {
+        const response = await fetch(`/api/stats/${userId}`);
+        if (response.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        
+        const data = await response.json();
+        
+        // Заполняем информацию
+        document.getElementById('user-telegram-id').textContent = data.telegram_id;
+        document.getElementById('user-status').textContent = data.status;
+        document.getElementById('user-status').className = `badge badge-${data.status === 'active' ? 'success' : 'secondary'}`;
+        document.getElementById('user-registered').textContent = data.registered_at;
+        document.getElementById('user-last-visit').textContent = data.last_visit_at;
+        document.getElementById('user-tokens').textContent = data.tokens_used;
+        document.getElementById('json-data').textContent = data.data_json;
+        
+    } catch (error) {
+        Swal.fire('Ошибка', 'Не удалось загрузить данные', 'error');
+    }
+}
+
+async function logout() {
+    const result = await Swal.fire({
+        title: 'Выход',
+        text: 'Вы уверены?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Да',
+        cancelButtonText: 'Нет'
+    });
+    
+    if (result.isConfirmed) {
+        await fetch('/logout', { method: 'POST' });
+        window.location.href = '/login';
+    }
+}
+
+function copyToClipboard() {
+    const text = document.getElementById('json-data').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        Swal.fire({
+            icon: 'success',
+            title: 'Скопировано!',
+            text: 'JSON скопирован в буфер обмена',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+}
+
+function confirmDelete() {
+    Swal.fire({
+        title: 'Удалить пользователя?',
+        text: `Вы уверены, что хотите удалить пользователя ${userId}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        confirmButtonText: 'Да, удалить',
+        cancelButtonText: 'Отмена'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/delete-user/${userId}`, { method: 'DELETE' })
+            .then(response => {
+                if (response.ok) {
+                    Swal.fire('Удалено!', 'Пользователь удалён', 'success')
+                        .then(() => window.location.href = '/stats');
+                } else {
+                    Swal.fire('Ошибка!', 'Не удалось удалить пользователя', 'error');
+                }
+            });
+        }
+    });
+}
+
+// Загружаем данные
+loadUserData();
+</script>
+
+</body>
+</html>
