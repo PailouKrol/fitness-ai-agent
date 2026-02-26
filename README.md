@@ -37,6 +37,7 @@
 ```python
 templates = Jinja2Templates(directory="/var/www/dmtr.fvds.ru")
 
+
 ## Тестирование
 ```bash
 python -m unittest discover tests -v
