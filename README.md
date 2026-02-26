@@ -24,11 +24,6 @@
 4. Создать `.env` файл с токенами
 5. Запустить: `python main.py`
 
-## Тестирование
-```bash
-python -m unittest discover tests -v
-
-
 ## 🖥️ Админ-панель
 
 Веб-интерфейс для администратора находится в папке [`/admin_panel`](./admin_panel):
@@ -41,3 +36,7 @@ python -m unittest discover tests -v
 **Важно:** в коде бота (`main.py`) прописан путь к этим файлам:
 ```python
 templates = Jinja2Templates(directory="/var/www/dmtr.fvds.ru")
+
+## Тестирование
+```bash
+python -m unittest discover tests -v
